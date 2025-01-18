@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.pkj.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.it.pkj.domain.SysUser">
+            <id property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="role" column="role" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id,username,password,
+        role
+    </sql>
+    <!-- 根据 ID 查找用户信息 -->
+    <select id="selectById" resultType="com.it.pkj.domain.SysUser">
+        select * from user where userId = #{id}
+    </select>
+
+    <!-- 插入用户信息 -->
+    <insert id="insert" parameterType="com.it.pkj.domain.SysUser">
+    insert into user (username, password, role)
+    values (#{username}, #{password}, #{role})
+    </insert>
+
+    <!-- 更新用户信息 -->
+    <update id="updateById" parameterType="com.it.pkj.domain.SysUser">
+        update user
+        set username = #{username},
+            password = #{password},
+            role = #{role}
+        where userId = #{userId}
+    </update>
+
+    <!-- 删除用户信息 -->
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from user where userId = #{id}
+    </delete>
+
+    <!-- 分页查询用户信息 -->
+    <select id="selectPage" resultType="com.it.pkj.domain.SysUser">
+        select * from user
+        <where>
+            <if test="ew!= null">
+                <if test="ew.sqlSegment!= null and ew.sqlSegment!= ''">
+                    ${ew.sqlSegment}
+                </if>
+            </if>
+        </where>
+        <if test="ew!= null and ew.orderByField!= null and ew.orderByField!= ''">
+            order by ${ew.orderByField} ${ew.isAsc? 'asc' : 'desc'}
+        </if>
+        limit #{offset}, #{limit}
+    </select>
+</mapper>

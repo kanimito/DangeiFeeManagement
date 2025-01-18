@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.pkj.mapper.PaymentRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.it.pkj.domain.PaymentRecord">
+            <id property="paymentRecordId" column="payment_record_id" jdbcType="INTEGER"/>
+            <result property="partyMemberId" column="party_member_id" jdbcType="INTEGER"/>
+            <result property="paymentTime" column="payment_time" jdbcType="TIMESTAMP"/>
+            <result property="paymentAmount" column="payment_amount" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        payment_record_id,party_member_id,payment_time,
+        payment_amount
+    </sql>
+    <!-- 根据 ID 查找缴费记录信息 -->
+    <select id="selectById" resultType="com.it.pkj.domain.PaymentRecord">
+        select * from paymentrecord where payment_record_id = #{id}
+    </select>
+
+    <!-- 插入缴费记录信息 -->
+    <insert id="insert" parameterType="com.it.pkj.domain.PaymentRecord">
+        insert into paymentrecord (party_member_id, payment_time, payment_amount)
+        values (#{partyMemberId}, #{paymentTime}, #{paymentAmount})
+    </insert>
+
+    <!-- 更新缴费记录信息 -->
+    <update id="updateById" parameterType="com.it.pkj.domain.PaymentRecord">
+        update paymentrecord
+        set party_member_id = #{partyMemberId},
+            payment_time = #{paymentTime},
+            payment_amount = #{paymentAmount}
+        where payment_record_id = #{paymentRecordId}
+    </update>
+
+    <!-- 删除缴费记录信息 -->
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from paymentrecord where payment_record_id = #{id}
+    </delete>
+
+    <!-- 分页查询缴费记录信息 -->
+    <select id="selectPage" resultType="com.it.pkj.domain.PaymentRecord">
+        select * from paymentrecord
+        <where>
+            <if test="ew!= null">
+                <if test="ew.sqlSegment!= null and ew.sqlSegment!= ''">
+                    ${ew.sqlSegment}
+                </if>
+            </if>
+        </where>
+        <if test="ew!= null and ew.orderByField!= null and ew.orderByField!= ''">
+            order by ${ew.orderByField} ${ew.isAsc? 'asc' : 'desc'}
+        </if>
+        limit #{offset}, #{limit}
+    </select>
+
+    <!-- 根据日期范围查询缴费记录 -->
+    <select id="selectByDateRange" resultType="com.it.pkj.domain.PaymentRecord">
+        select * from paymentrecord
+        where payment_time between #{startDate} and #{endDate}
+    </select>
+</mapper>
